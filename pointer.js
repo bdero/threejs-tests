@@ -31,19 +31,19 @@ Pointer.init = function() {
     Pointer.lockElement = document.body;
     //console.log(Pointer.lockElement);
 
-    if (Pointer.canLock()) {
-	Pointer.lockElement.requestPointerLock = 
-	    Pointer.lockElement.requestPointerLock ||
-	    Pointer.lockElement.mozRequestPointerLock ||
-	    Pointer.lockElement.webkitRequestPointerLock;
-	Pointer.lockElement.exitPointerLock =
-	    document.exitPointerLock ||
-	    document.mozExitPointerLock ||
-	    document.webkitExitPointerLock;
-    } else {
+    if (!Pointer.canLock()) {
 	console.log("Pointer lock not supported by browser.");
 	return;
     }
+
+    Pointer.lockElement.requestPointerLock = 
+	Pointer.lockElement.requestPointerLock ||
+	Pointer.lockElement.mozRequestPointerLock ||
+	Pointer.lockElement.webkitRequestPointerLock;
+    Pointer.lockElement.exitPointerLock =
+	document.exitPointerLock ||
+	document.mozExitPointerLock ||
+	document.webkitExitPointerLock;
 
     // Pointer defaults and listeners
 
