@@ -25,7 +25,15 @@ function start() {
 	scene.add(light);
     }
 
-    renderer.render(scene, camera);
+    Pointer.init();
+    document.addEventListener('click', clickCallback, false);
+
+    update();
+}
+
+function clickCallback() {
+    if (!Pointer.isLocked())
+	Pointer.lock();
 }
 
 function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplitude) {
@@ -59,4 +67,6 @@ function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplit
 
 function update() {
     requestAnimFrame(update);
+
+    renderer.render(scene, camera);
 }
