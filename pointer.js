@@ -70,8 +70,10 @@ Pointer.changeCallback = function() {
 };
 
 Pointer.moveCallback = function(event) {
-    Pointer.movementX = event.movementX;
-    Pointer.movementY = event.movementY;
+    event.movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    event.movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+    Pointer.move(event);
 }
 
 Pointer.errorCallback = function() {

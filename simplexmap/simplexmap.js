@@ -26,6 +26,7 @@ function start() {
     }
 
     Pointer.init();
+    Pointer.move = moveCallback;
     document.addEventListener('click', clickCallback, false);
 
     update();
@@ -34,6 +35,10 @@ function start() {
 function clickCallback() {
     if (!Pointer.isLocked())
 	Pointer.lock();
+}
+
+function moveCallback(event) {
+    console.log(event.movementX, event.movementY);
 }
 
 function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplitude) {
