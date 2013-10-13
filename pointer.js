@@ -1,14 +1,3 @@
-// Device-friendly animation
-
-window.requestAnimFrame = (function() {
-    return window.requestAnimationFrame ||
-	window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        function(callback) {
-            window.setTimeout(callback, 1000/60);
-        };
-})();
-
 // Pointer
 
 var Pointer = Pointer || {};
