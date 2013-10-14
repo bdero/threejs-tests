@@ -2,6 +2,9 @@ var renderer, camera, scene;
 var windowResize, simplex;
 var timestamp, FRAME_GOAL = 1000/60; // Adjust values to 60 frames/ms
 
+var SIMPLEX_AMPLITUDE = 10, SIMPLEX_RATIO = 0.01;
+var MOVE_SPEED = 1;
+
 function start() {
     // Setup three.js
 
@@ -24,7 +27,7 @@ function start() {
     // Add elements to the scene
 
     simplex = new SimplexNoise();
-    addSimplexPlane(0, 0, 500, 100, 0.01, 10);
+    addSimplexPlane(0, 0, 500, 100, SIMPLEX_RATIO, SIMPLEX_AMPLITUDE);
 
     {
 	var light = new THREE.PointLight(0xffffff);
@@ -72,7 +75,8 @@ function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplit
     for (var gz = 0; gz < lVerts; gz++)
 	for (var gx = 0; gx < lVerts; gx++)
 	    geo.vertices[gz*lVerts + gx].y += simplex.noise2D(
-		(x + gx*segSize)*simplexRatio, (z + gz*segSize)*simplexRatio
+		((x + gx*segSize) - size/2)*simplexRatio,
+		((z + gz*segSize) - size/2)*simplexRatio
 	    )*simplexAmplitude;
 
     geo.computeFaceNormals();
@@ -101,9 +105,39 @@ function update() {
 }
 
 function updateMovement(dt) {
-    if (keyboard.pressed('W')) {
-	
+    // Find direction vectors
+
+    var forwardDirection = camera.lookVector.clone();
+    forwardDirection.setY(0);
+    forwardDirection.normalize();
+
+    var strafeDirection = new THREE.Vector3();
+    strafeDirection.crossVectors(forwardDirection, camera.upVector);
+
+    // Find scale based on input
+
+    var forwardScale = 0;
+    if (keyboard.pressed('W')) { forwardScale += 1 }
+    if (keyboard.pressed('S')) { forwardScale -= 1 }
+    forwardDirection.multiplyScalar(forwardScale);
+
+    var strafeScale = 0;
+    if (keyboard.pressed('D')) { strafeScale += 1 }
+    if (keyboard.pressed('A')) { strafeScale -= 1 }
+    strafeDirection.multiplyScalar(strafeScale);
+
+    // Apply changes
+
+    if (forwardScale || strafeScale) {
+	var moveDirection = forwardDirection.clone();
+	moveDirection.add(strafeDirection);
+	moveDirection.normalize();
+	moveDirection.multiplyScalar(MOVE_SPEED);
+	camera.position.add(moveDirection);
     }
 
-    camera.position.y = simplex.noise2D(camera.position.z, camera.position.z) + 10;
+    camera.position.setY(simplex.noise2D(
+	camera.position.x*SIMPLEX_RATIO,
+	camera.position.z*SIMPLEX_RATIO
+    )*SIMPLEX_AMPLITUDE + 10);
 }
