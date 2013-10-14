@@ -22,7 +22,9 @@ Pointer.isLocked = function() {
 	   document.webkitPointerLockElement === Pointer.lockElement;
 };
 
-Pointer.init = function() {
+Pointer.init = function(controls) {
+    Pointer.controls = controls;
+
     Pointer._canLock =
 	'pointerLockElement' in document ||
 	'mozPointerLockElement' in document ||
@@ -64,8 +66,10 @@ Pointer.changeCallback = function() {
     var element = document.body;
     if (Pointer.isLocked()) {
 	document.addEventListener('mousemove', Pointer.moveCallback, false);
+	if (Pointer.controls) Pointer.controls.enabled = true;
     } else {
 	document.removeEventListener('mousemove', Pointer.moveCallback, false);
+	if (Pointer.controls) Pointer.controls.enabled = false;
     }
 };
 
