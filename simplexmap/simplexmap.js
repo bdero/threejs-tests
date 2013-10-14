@@ -16,7 +16,7 @@ function start() {
     windowResize = THREEx.WindowResize(renderer, camera);
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x000000, 0, 250);
+    scene.fog = new THREE.Fog(0x99ccff, 0, 250);
 
     scene.add(camera);
     camera.lookVector = new THREE.Vector3(0, 0, -1);
@@ -27,10 +27,10 @@ function start() {
     // Add elements to the scene
 
     simplex = new SimplexNoise();
-    addSimplexPlane(0, 0, 500, 100, SIMPLEX_RATIO, SIMPLEX_AMPLITUDE);
+    addSimplexPlane(0, 0, 1000, 100, SIMPLEX_RATIO, SIMPLEX_AMPLITUDE);
 
     {
-	var light = new THREE.PointLight(0xffffff);
+	var light = new THREE.PointLight(0xffffcc);
 	light.position.y = 15;
 
 	scene.add(light);
@@ -60,7 +60,7 @@ function moveCallback(event) {
 }
 
 function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplitude) {
-    var mat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    var mat = new THREE.MeshPhongMaterial({ color: 0x33dd44 });
 
     // Generate plane geometry
     var geo = new THREE.PlaneGeometry(size, size, lengthSegments, lengthSegments)
