@@ -1,4 +1,4 @@
-var renderer, camera, scene;
+var renderer, camera, camPitch, camYaw, scene;
 var windowResize, simplex;
 var timestamp, FRAME_GOAL = 1000/60; // Adjust values to 60 frames/ms
 
@@ -18,7 +18,12 @@ function start() {
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x99ccff, 0, 250);
 
-    scene.add(camera);
+    camPitch = new THREE.Object3D();
+    camPitch.add(camera);
+    camYaw = new THREE.Object3D();
+    camYaw.add(camPitch);
+    scene.add(camYaw);
+
     camera.lookVector = new THREE.Vector3(0, 0, -1);
     camera.upVector = new THREE.Vector3(0, 1, 0);
 
@@ -57,6 +62,17 @@ function clickCallback() {
 
 function moveCallback(event) {
     console.log(event.movementX, event.movementY);
+
+    camYaw.rotation.y -= event.movementX*0.002;
+    camPitch.rotation.x -= event.movementY*0.002;
+
+    camPitch.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camPitch.rotation.x ));
+
+    //var rot = new THREE.Quaternion();
+    //rot.setFromEuler(camera.lookVector);
+    //horizontal.setFromAxisAngle(camera.upVector, -event.movementX*0.002);
+    //camera.rotation.setFromQuaternion(horizontal);
+    //console.log(camera.rotation);
 }
 
 function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplitude) {
@@ -132,11 +148,11 @@ function updateMovement(dt) {
 	var moveDirection = forwardDirection.clone();
 	moveDirection.add(strafeDirection);
 	moveDirection.normalize();
-	moveDirection.multiplyScalar(MOVE_SPEED);
-	camera.position.add(moveDirection);
+	moveDirection.multiplyScalar(MOVE_SPEED*dt);
+	camPitch.position.add(moveDirection);
     }
 
-    camera.position.setY(simplex.noise2D(
+    camPitch.position.setY(simplex.noise2D(
 	camera.position.x*SIMPLEX_RATIO,
 	camera.position.z*SIMPLEX_RATIO
     )*SIMPLEX_AMPLITUDE + 10);
