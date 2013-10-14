@@ -1,5 +1,5 @@
-var renderer, camera, camPitch, camYaw, scene;
-var windowResize, simplex;
+var renderer, camera, scene, camPitch, camYaw;
+var windowResize, keyboard, simplex;
 var timestamp, FRAME_GOAL = 1000/60; // Adjust values to 60 frames/ms
 
 var SIMPLEX_AMPLITUDE = 10, SIMPLEX_RATIO = 0.01;
@@ -67,12 +67,6 @@ function moveCallback(event) {
     camPitch.rotation.x -= event.movementY*0.002;
 
     camPitch.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camPitch.rotation.x ));
-
-    //var rot = new THREE.Quaternion();
-    //rot.setFromEuler(camera.lookVector);
-    //horizontal.setFromAxisAngle(camera.upVector, -event.movementX*0.002);
-    //camera.rotation.setFromQuaternion(horizontal);
-    //console.log(camera.rotation);
 }
 
 function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplitude) {
@@ -100,7 +94,6 @@ function addSimplexPlane(x, z, size, lengthSegments, simplexRatio, simplexAmplit
 
     var mesh = new THREE.Mesh(geo, mat);
 
-    //mesh.rotation.x = -Math.PI/2
     mesh.position.x = x;
     mesh.position.z = z;
 
@@ -148,12 +141,11 @@ function updateMovement(dt) {
 	var moveDirection = forwardDirection.clone();
 	moveDirection.add(strafeDirection);
 	moveDirection.normalize();
-	moveDirection.multiplyScalar(MOVE_SPEED*dt);
-	camPitch.position.add(moveDirection);
+	camYaw.translateOnAxis(moveDirection, MOVE_SPEED*dt);
     }
 
-    camPitch.position.setY(simplex.noise2D(
-	camera.position.x*SIMPLEX_RATIO,
-	camera.position.z*SIMPLEX_RATIO
+    camYaw.position.setY(simplex.noise2D(
+	camYaw.position.x*SIMPLEX_RATIO,
+	camYaw.position.z*SIMPLEX_RATIO
     )*SIMPLEX_AMPLITUDE + 10);
 }
